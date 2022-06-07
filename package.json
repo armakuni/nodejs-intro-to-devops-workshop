@@ -16,7 +16,7 @@
   "scripts": {
     "start": "node src/app.js",
     "test": "jest",
-    "lint": "eslint ./*.js"
+    "lint": "eslint . --ext .js"
   },
   "repository": {
     "type": "git",
