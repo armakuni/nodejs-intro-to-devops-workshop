@@ -105,3 +105,6 @@ dist
 
 # NVM
 .nvmrc
+
+# Misc
+.DS_Store
