@@ -52,30 +52,6 @@ This repository, is a nodejs introductory application to DevOps. It is a basic a
 ## Running the App locally
 With all the prerequisite tools and app dependencies now installed you can run and interact with the app on your local machine. To do this run the following command from the root of the repo.
 
-```
-npm run start
-```
-
-If successful you should see the following in your terminal
-
-```
-app listening on port 3000
-```
-
-With the app now running you are able to interact with it on the listening port listed in your terminal by making requests to it via a tool like Postman (https://www.postman.com/downloads/) on:
-
-```
-localhost:<port>
-```
-
-The app exposes 2 endpoints a `GET` on `/` and a `POST` on `/greet`. The first returns a simple Hello World message if successful, whilst the second expects a json body containing the name to greet, and will return a greeting if successful.
-
-```
-{
-  "name": "Bob"
-}
-```
-You can terminate the app at any time with `ctrl+c`.
 
 ### Running the Tests
 The App also contains a series of simple example unit tests, these can be run with the following command, this uses the Jest jaavscript testing framework (https://jestjs.io/).
@@ -91,48 +67,77 @@ Linting can also be ran against the app code by running the following command, t
 npm run lint
 ```
 
+### Node Application
+```
+npm run start
+```
+
+If successful you should see the following in your terminal
+
+```
+app listening on port 3000
+```
+
+With the app now running you are able to interact with it on the listening port listed in your terminal by making requests to it via a tool like Postman (https://www.postman.com/downloads/) on:
+
+To test the application on your browser, click on the link below
+http://localhost:3000
+
+The app exposes 2 endpoints a `GET` on `/` and a `POST` on `/greet`. The first returns a simple Hello World message if successful, whilst the second expects a json body containing the name to greet, and will return a greeting if successful.
+
+```
+{
+  "name": "Bob"
+}
+```
+You can terminate the app at any time with `ctrl+c`.
+
+
 With all dependencies installed you can now run your application using the code below. This will start the application without using docker. Once the application is up and running you can then call the endpoint using postman.
 
 
 ## Running the App in Docker
 ### Create a Dockerfile
-Before we can run the App in docker we first need to create a Dockerfile, this file will contain a series of instructions to be carried out to build the desired docker image, you can read more about Dockerfiles [here](https://docs.docker.com/engine/reference/builder/).
 
-The first element of any Dockerfile is defining the base image with which it will build upon. Base images are typically images containing lightweight or cutdown versions of linux based OS's (e.g. https://www.alpinelinux.org/ or Debian Slim etc), but may also contain various tools and dependencies pre-configured and ready for use. 
+| KEYWORD       | Usage Description
+| ------------- | ------------- 
+| FROM          | Defines the base image to use to start the build process. A image defined here will be pulled from Docker Hub or other container repository. It needs to be the first command declared inside a Dockerfile.         
+| WORKDIR      | Set where the command defined with CMD is to be executed.       
+| ENV          | Sets an Environment variable within the container & can be accessed by scripts and applications alike.         
+| CMD          | Execute the given command when a container is instantiated using the image being built.         
+| RUN          | Execute any additional command when docker image is built.        
+| EXPOSE       | Used to associate a specified port to enable networking between the running process inside the container and the outside world (i.e. the host).
+| COPY         | Takes in a src and destination arguments & copy a local file or directory from your host (the machine building the Docker image) into the Docker image itself.
+| ADD          | Apart from what COPY does, it also supports 2 other sources. First, you can use a URL instead of a local file / directory. Secondly, you can extract a tar file from the source directly into the destination.        
+| ENTRYPOINT   | Sets the concrete default application that is used every time a container is created using the image. For example, here we are using Spring Boot application inside the image. To only run that application use ENTRYPOINT and whenever a container is created our application will be the target. If we couple ENTRYPOINT with CMD, we can remove “application” from CMD and just leave “arguments” which will be passed to the ENTRYPOINT.
 
-In this we will be using one of NodeJS's official docker images as the base image (see https://hub.docker.com/_/node), there are a number of different variant images available, known as different tags, with each based on different OS's or OS version or included tools, but all will have some version NodeJS and NPM already installed and configured.
 
-To define this in our Dockerfile we use the FROM statement on the first like of the file, this should then be followed by the name of the image, in this case `node`. We can also optionally define a specific tag of the image to use by adding a `:` and then the name of the tag. Tags are not required but not defining one causes it to use the `latest` tag by default which may not contain the desired versions or tools. In this we want to use specifically Node v14.x so will want the appropriate tag which contains this version, you can search through the available tags here https://hub.docker.com/_/node?tab=tags.
-
-Once pieced together your base image definitions should looks something like:
-
-```
-FROM <image_name>:<image_tag>
-```
-
-Next we will want to set the working directory of the image, this is essentially just the directory were other commands will be run from. We can do this with the `WORKDIR` statement.
-
-```
-WORKDIR <path>
-```
-
-Next we will want to copy the files necessary for the app into the image so that we can later run the app within the image. We can copy files and directories with the COPY command followed by the path to the source files locally (this will be relative to location of the build context, this is typically the location of the Dockerfile, but can be different) and then the destination path within the image (absolute path or relative to the working directory).
+Once pieced together your base image definitions should looks something like the below:
 
 ```
-COPY <src> <dest> 
+FROM node:14-alpine3.16
+```
+```
+WORKDIR /app
+```
+```
+COPY . /app
+```
+```
+RUN npm install
+```
+```
+RUN addgroup www; \
+    adduser -D -G www nodeusr; \
+    chown -R :www /app;
+```
+```
+USER nodeusr
+```
+```
+CMD ["npm", "start"]
 ```
 
-Next we we will want to run some commands to perform any configuration that may be needed for the app to run, e.g. installing the apps dependencies. We can do this by using the `RUN` statement followed by the command as you would use it in your own terminal
-
-```
-RUN node -v
-```
-
-Finally we want to define the command to be executed when we run the built image, this will likely be the command needed to start the app. We do this with the `CMD` statement followed by a list of comma separated parameters & arguments.
-
-```
-CMD ["node","-v"]
-```
 
 ### Build the Docker Image
 Before we can run the docker image containing our app we first need to build it using the Dockerfile we previously created. We do this with the following command, specifying a tag to name the image (e.g. `my-node-app`) with the `-t` option, and then the path to the context (this is important as the src location in `COPY` commands is relative to this). Optionally you can also use the `-f` option followed by a path if your Dockerfile is in a different location from where you are building the image.
