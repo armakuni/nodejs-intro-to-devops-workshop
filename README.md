@@ -4,7 +4,7 @@
 
 This repository, is a nodejs introductory application to DevOps. It is a basic application that highlights the core principles of DevOps.
 
-## Technologies
+### Technologies
 - Javascript (ES6+)
 - Nodejs (v14.x)
 - Express
@@ -14,14 +14,21 @@ This repository, is a nodejs introductory application to DevOps. It is a basic a
 - Kubernetes
 
 ## Setup & Prerequisites
-### Install NodeJS
+
+  ### 1. Create Docker Hub account
+
+  Sign up for a Free docker hub account by [clicking here](https://hub.docker.com/signup).
+  
+  Remember your docker hub id and password as we will require them later.
+
+  ### 2. Install NodeJS
   First you will need to install NodeJS, if your unsure if you already have Node installed then run the version command (see below) to check for any currently installed versions of Node.
   
   ```
   node -v
   ```
   
-  If this command gives and error or returns a version other than the one used for this exercise (v14.x) then you will need to install or update Node.
+  If this command errors or returns a version other than the one used for this exercise (v14.x) then you will need to install or update Node.
 
   If you are using a mac then the easiest way to install NodeJS is via brew, by using the following command:
   
@@ -32,29 +39,66 @@ This repository, is a nodejs introductory application to DevOps. It is a basic a
 
   >If you wish to have multiple different versions of node installed at the same time, as different projects may have different requirements, then you can use a tool such as NVM (https://github.com/nvm-sh/nvm) to manage this. 
 
-  ### Install Docker Desktop
+  ### 3. Install Docker Desktop
   Next you will need to install Docker Desktop, to do this visit https://www.docker.com/products/docker-desktop/ and follow the instructions for your OS. 
 
   Once installed ensure docker desktop is running, on mac you should see the docker logo (whale with containers on its back) in your task bar on the top of your screen, when you hover your mouse over it, it should show you the status of docker, this should be `Docker Desktop is Running`.
-  
-  Open this and then click the cog icon in the top right to navigate to Preferences click on `Kubernetes` and then check the `Enable Kubernetes` box then hit `Apply & Restart`. 
 
-  ### Install kubectl
-  The final tool you need to install is kubectl the kubernetes command line tool. To do this visit https://kubernetes.io/docs/tasks/tools/ and follow the instructions for your OS.
+  Execute below command to confirm the docker is running:
+  ```
+  docker --version
+  ```
 
-  ### Install App Dependencies
-  Finally before the app can be run we need to install its dependencies. To do this ensure that you are at the root of the repo and then run the following `npm` command.
+  ### 4. Enable Kubernetes in Docker Desktop
+
+  Open the docker desktop app and follow the steps below as shown in the images to setup Kubernetes as indicated by the red arrow.
+
+  #### 4.1 Click on the gear icon
+  ![Alt text](./images/image-one.png )
+  #### 4.2 Select kubernetes
+  ![Alt text](./images/image-two.png )
+  #### 4.2 Enable kubernetes checkbox
+  ![Alt text](./images/image-three.png )
+  #### 4.2 Click on Apply & Restart
+  ![Alt text](./images/image-four.png )
+
+  ### 4.4 Installing `kubectl` cli
+
+  We use kubernetes command line tool `kubectl` to interact with the Kubernetes cluster. Execute below command in your terminal to install it:
+  ```
+  brew install kubectl
+  ```
+  For other OS installation options [click here](https://kubernetes.io/docs/tasks/tools/).
+
+  To ensure your Kubernetes installation is working execute the following command
+  ```
+  kubectl get namespaces
+  ```
+
+  You should see an output as below, these are the default namespaces that comes with your installation.
+
+  ![Alt text](./images/image-five.png "Select gear")
+
+## Running the App locally
+
+Clone the repository to your workspace and open the codebase in an IDE of your choice.
+
+```
+git clone https://github.com/armakuni/nodejs-intro-to-devops-workshop.git
+```
+
+### Install App Dependencies
+Finally before the app can be run we need to install its dependencies. To do this ensure that you are at the root of the repo and then run the following `npm` command.
 
   ```
   npm install
   ```
 
-## Running the App locally
 With all the prerequisite tools and app dependencies now installed you can run and interact with the app on your local machine. To do this run the following command from the root of the repo.
 
 
 ### Running the Tests
-The App also contains a series of simple example unit tests, these can be run with the following command, this uses the Jest jaavscript testing framework (https://jestjs.io/).
+The App also contains a series of simple example unit tests, these can be run with the following command, this uses the Jest javascript testing framework (https://jestjs.io/).
 
 ```
 npm run test
@@ -68,6 +112,7 @@ npm run lint
 ```
 
 ### Node Application
+Execute below command from to start the application:
 ```
 npm run start
 ```
@@ -78,23 +123,27 @@ If successful you should see the following in your terminal
 app listening on port 3000
 ```
 
-With the app now running you are able to interact with it on the listening port listed in your terminal by making requests to it via a tool like Postman (https://www.postman.com/downloads/) on:
-
-To test the application on your browser, click on the link below
-http://localhost:3000
-
-The app exposes 2 endpoints a `GET` on `/` and a `POST` on `/greet`. The first returns a simple Hello World message if successful, whilst the second expects a json body containing the name to greet, and will return a greeting if successful.
-
-```
-{
-  "name": "Bob"
-}
-```
-You can terminate the app at any time with `ctrl+c`.
+The app exposes 2 endpoints which can either be tested using CLI utility [curl](https://curl.se/), [Postman](https://www.postman.com/downloads/) or browser for `GET` requests:
 
 
-With all dependencies installed you can now run your application using the code below. This will start the application without using docker. Once the application is up and running you can then call the endpoint using postman.
+1. A `GET` on `http://localhost:3000/` which  returns a simple `Hello local world!` message if successful.
 
+  To test the application on your browser, click on   the link below
+  http://localhost:3000
+
+  Expected Output:
+  ![](./images/local-response.png)
+
+
+  2. A `GET` on `/` and a `POST` on `/greet`. The   first returns a simple Hello World message if   successful, whilst the second expects a json body   containing the name to greet, and will return a   greeting if successful.
+
+  ```
+  {
+    "name": "Bob"
+  }
+  ```
+
+You can terminate the app at any time with `ctrl  +c`.
 
 ## Running the App in Docker
 ### Create a Dockerfile
@@ -116,25 +165,13 @@ Once pieced together your base image definitions should looks something like the
 
 ```
 FROM node:14-alpine3.16
-```
-```
 WORKINGDIR /app
-```
-```
-CPY . /app
-```
-```
-RUN npminstall
-```
-```
+COPY . /app
+RUN npm install
 RUN addgroup www; \
     adduser -D -G www nodeusr; \
     chown -R :www /app;
-```
-```
 USER nodeusr
-```
-```
 CMD ["npm", "start"]
 ```
 
@@ -179,34 +216,6 @@ If you ran the container in the foreground without the `-d` option then you can 
 ```
 docker stop <container_id>
 ```
-
-### Setting up Kubernetes
-Follow these steps below as shown in the images to setup Kubernetes as indicated by the red arrow
-
-#### Click on the gear icon
-![Alt text](./images/image-one.png )
-#### Select kubernetes
-![Alt text](./images/image-two.png )
-#### Enable kubernetes checkbox
-![Alt text](./images/image-three.png )
-#### Click on Apply & Restart
-![Alt text](./images/image-four.png )
-
-### Running the App in Kubernetes
-
-First we need to install kubernetes commandline tool using the code below:
-```
-brew install kubectl
-```
-To ensure your Kubernetes installation is working run the following command
-```
-kubectl get namespaces
-```
-
-You should see the image below:
-These are the default namespaces that comes with your installation.
-
-![Alt text](./images/image-five.png "Select gear")
 
 - There are two files we need to familiarise ourselves with, both of them are kubernetes manefest located in the kubernetes folder.
 
