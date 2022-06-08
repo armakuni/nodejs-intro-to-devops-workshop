@@ -183,9 +183,9 @@ docker stop <container_id>
 ### Setting up Kubernetes
 Follow these steps below as shown in the images to setup Kubernetes as indicated by the red arrow
 
-#### click on the gear icon
+#### Click on the gear icon
 ![Alt text](./images/image-one.png )
-#### select kubernetes
+#### Select kubernetes
 ![Alt text](./images/image-two.png )
 #### Enable kubernetes checkbox
 ![Alt text](./images/image-three.png )
