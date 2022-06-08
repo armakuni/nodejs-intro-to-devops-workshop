@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-intro-to-devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-intro-to-devops
+  template:
+    metadata:
+      labels:
+        app: nodejs-intro-to-devops
+    spec:
+      containers:
+        - name: nodejs-intro-to-devops
+          image: abhisheksr01/nodejs-intro-to-devops:latest
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
