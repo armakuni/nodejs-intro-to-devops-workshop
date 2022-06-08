@@ -1,6 +1,5 @@
 import request from 'supertest'
-
-import app from '../app.js'
+import app from '../src/app/app.js'
 
 describe('GET /', () => {
     it('returns a 200 hello world when called', async () => {

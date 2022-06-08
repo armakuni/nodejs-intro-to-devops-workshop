@@ -1,6 +1,5 @@
 import request from 'supertest'
-
-import app from '../app.js'
+import app from '../src/app/app.js'
 
 describe('POST /greet', () => {
     it('returns a 200 and a greeting when called with a valid request', async () => {
