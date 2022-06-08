@@ -118,13 +118,13 @@ Once pieced together your base image definitions should looks something like the
 FROM node:14-alpine3.16
 ```
 ```
-WORKDIR /app
+WORKINGDIR /app
 ```
 ```
-COPY . /app
+CPY . /app
 ```
 ```
-RUN npm install
+RUN npminstall
 ```
 ```
 RUN addgroup www; \
@@ -137,6 +137,8 @@ USER nodeusr
 ```
 CMD ["npm", "start"]
 ```
+
+Using the example above, create a docker file for this project [there are delebrate mistakes to be fixed].
 
 
 ### Build the Docker Image
@@ -178,5 +180,30 @@ If you ran the container in the foreground without the `-d` option then you can 
 docker stop <container_id>
 ```
 
+### Setting up Kubernetes
+Follow these steps below as shown in the images to setup Kubernetes
+
+#### click on the gear icon
+![Alt text](./images/image-one.png "Select gear")
+#### select kubernetes
+![Alt text](./images/image-two.png "Select gear")
+#### Enable kubernetes checkbox
+![Alt text](./images/image-three.png "Select gear")
+#### Click on Apply & Restart
+![Alt text](./images/image-four.png "Select gear")
+
 ### Running the App in Kubernetes
 
+First we need to install kubernetes commandline tool using the code below:
+```
+brew install kubectl
+```
+To ensure your Kubernetes installation is working run the following command
+```
+kubectl get namespaces
+```
+
+You should see the image below:
+These are the default namespaces that comes with your installation.
+
+![Alt text](./images/image-five.png "Select gear")
