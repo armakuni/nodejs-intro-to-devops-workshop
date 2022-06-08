@@ -181,16 +181,16 @@ docker stop <container_id>
 ```
 
 ### Setting up Kubernetes
-Follow these steps below as shown in the images to setup Kubernetes
+Follow these steps below as shown in the images to setup Kubernetes as indicated by the red arrow
 
 #### click on the gear icon
-![Alt text](./images/image-one.png "Select gear")
+![Alt text](./images/image-one.png )
 #### select kubernetes
-![Alt text](./images/image-two.png "Select gear")
+![Alt text](./images/image-two.png )
 #### Enable kubernetes checkbox
-![Alt text](./images/image-three.png "Select gear")
+![Alt text](./images/image-three.png )
 #### Click on Apply & Restart
-![Alt text](./images/image-four.png "Select gear")
+![Alt text](./images/image-four.png )
 
 ### Running the App in Kubernetes
 
@@ -207,3 +207,29 @@ You should see the image below:
 These are the default namespaces that comes with your installation.
 
 ![Alt text](./images/image-five.png "Select gear")
+
+- There are two files we need to familiarise ourselves with, both of them are kubernetes manefest located in the kubernetes folder.
+
+- These files outline the objects that will be created.
+
+### Run the command in your terminal
+
+Kubernetes apply will instruct the kubernetes api to create the object as specified in the kubernetes manifest.
+
+```
+kubectl apply -f ./kubernetes
+```
+The following command exposes the port
+```
+kubectl port-forward service/nodejs-intro-to-devops 3000:3000
+```
+
+The get pods lists all running pods. You should be able to see the nodejs intro to devops listed after this command is run.
+```
+kubectl get pods
+```
+
+Finally, to cleanup your project, run the command to delete the pod
+```
+kubectl delete -f ./kubernetes
+```
