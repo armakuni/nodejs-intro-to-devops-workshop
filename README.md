@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository, is a nodejs introductory application to DevOps. It is a basic application that highlights the core princilples of DevOps.
+This repository, is a nodejs introductory application to DevOps. It is a basic application that highlights the core principles of DevOps.
 
 ## Technologies
 - Javascript (ES6+)
@@ -96,7 +96,7 @@ With all dependencies installed you can now run your application using the code 
 
 ## Running the App in Docker
 ### Create a Dockerfile
-Before we can run the App in docker we first need to create a Dockerfile, this file will contain a series of instructions to be carried out to build the desired docker image, you can read more about Dockerfiles at https://docs.docker.com/engine/reference/builder/. 
+Before we can run the App in docker we first need to create a Dockerfile, this file will contain a series of instructions to be carried out to build the desired docker image, you can read more about Dockerfiles [here](https://docs.docker.com/engine/reference/builder/).
 
 The first element of any Dockerfile is defining the base image with which it will build upon. Base images are typically images containing lightweight or cutdown versions of linux based OS's (e.g. https://www.alpinelinux.org/ or Debian Slim etc), but may also contain various tools and dependencies pre-configured and ready for use. 
 
