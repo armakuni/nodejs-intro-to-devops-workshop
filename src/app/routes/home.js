@@ -9,7 +9,7 @@ router.get(route, (_, res) => {
 
     res.status(200)
     res.setHeader('content-type', 'text/plain')
-    res.send('Hello World!')
+    res.send(process.env.GREET_MESSAGE || 'Hello local world!')
 })
 
 export default router

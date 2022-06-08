@@ -8,6 +8,6 @@ describe('GET /', () => {
 
         expect(res.status).toEqual(200)
         expect(res.headers['content-type']).toMatch('text/plain')
-        expect(res.text).toEqual('Hello World!')
+        expect(res.text).toEqual('Hello local world!')
     })
 })
