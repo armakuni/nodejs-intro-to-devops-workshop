@@ -37,7 +37,7 @@ This repository, is a nodejs introductory application to DevOps. It is a basic a
   ```
   If you are using windows or linux then follow the installation instructions for your OS at https://nodejs.org/en/download/, you may need to navigate to the previous versions section and search for version 14.
 
-  >If you wish to have multiple different versions of node installed at the same time, as different projects may have different requirements, then you can use a tool such as NVM (https://github.com/nvm-sh/nvm) to manage this. 
+  >If you wish to have multiple different versions of node installed at the same time, as different projects may have different requirements, then you can use a tool such as [NVM](https://github.com/nvm-sh/nvm) to manage this. 
 
   ### 3. Install Docker Desktop
   Next you will need to install Docker Desktop, to do this visit https://www.docker.com/products/docker-desktop/ and follow the instructions for your OS. 
@@ -112,7 +112,7 @@ npm run lint
 ```
 
 ### Node Application
-Execute below command from to start the application:
+Execute below command to start the application:
 ```
 npm run start
 ```
@@ -126,7 +126,7 @@ app listening on port 3000
 The app exposes 2 endpoints which can either be tested using CLI utility [curl](https://curl.se/), [Postman](https://www.postman.com/downloads/) or browser for `GET` requests:
 
 
-1. A `GET` on `http://localhost:3000/` which  returns a simple `Hello local world!` message if successful.
+- A `GET` on `http://localhost:3000/` which  returns a simple `Hello local world!` message if successful.
 
   To test the application on your browser, click on   the link below
   http://localhost:3000
@@ -135,12 +135,17 @@ The app exposes 2 endpoints which can either be tested using CLI utility [curl](
   ![](./images/local-response.png)
 
 
-  2. A `GET` on `/` and a `POST` on `/greet`. The   first returns a simple Hello World message if   successful, whilst the second expects a json body   containing the name to greet, and will return a   greeting if successful.
-
+- A `POST` on `/greet` expects a json body   containing the name to greet, and will return a   greeting if successful.
   ```
+  curl -X POST -H "Content-Type: application/json" -d '{"name": "Bob"}' http://localhost:3000/greet
+  ```
+
+  Expected Output:
+
+  ```json
   {
-    "name": "Bob"
-  }
+    "msg":"Hello Bob!"
+  }⏎  
   ```
 
 You can terminate the app at any time with `ctrl  +c`.
@@ -175,14 +180,23 @@ USER nodeusr
 CMD ["npm", "start"]
 ```
 
-Using the example above, create a docker file for this project [there are delebrate mistakes to be fixed].
+Using the example above, create a docker file for this project <b>[there are deliberate mistakes to be fixed].</b>
 
 
 ### Build the Docker Image
-Before we can run the docker image containing our app we first need to build it using the Dockerfile we previously created. We do this with the following command, specifying a tag to name the image (e.g. `my-node-app`) with the `-t` option, and then the path to the context (this is important as the src location in `COPY` commands is relative to this). Optionally you can also use the `-f` option followed by a path if your Dockerfile is in a different location from where you are building the image.
+Before we can run the docker image containing our app we first need to build it using the Dockerfile we previously created.
+
+We do this with the following command, specifying a tag to name the image (e.g. `my-node-app`) with the `-t` option, and then the path to the context (this is important as the src location in `COPY` commands is relative to this).
+
+Optionally you can also use the `-f` option followed by a path if your Dockerfile is in a different location from where you are building the image.
 
 ```
-docker build -t <tag_name> <path_to_context>
+docker build -t [YOUR_DOCKER_HUB_ID/DOCKER_IMAGE_NAME]:[TAG] <path_to_context>
+```
+
+Example:
+```
+docker build -t abhisheksr01/helloworld:0.0.1 .
 ```
 
 If the image successfully builds then you should see it in the list of locally available images when you run the docker list images command:
@@ -191,14 +205,28 @@ If the image successfully builds then you should see it in the list of locally a
 docker image ls
 ```
 
-### Running the Image
-With the image now successfully built we can now run the image in a docker container, we can do this with the following run command, specifying the image name and tag, that we defined when we built it, with the `-p` option to expose ports and optionally the `-d` option to run it in detached mode in the background.
+### Running the container using the image
+With the image now successfully built we can now run the image in a docker container.
+
+We can do this with the following run command, specifying the image name and tag, that we defined when we built it, with the `-p` option to expose ports and optionally the `-d` option to run it in detached mode in the background.
 
 ```
-docker run -p <container_port>:<local_port> <image_name>
+docker run -p [container_port]:[local_port] -d [YOUR_DOCKER_HUB_ID/DOCKER_IMAGE_NAME]:[TAG]
 ```
 
-With the container now running you should be able to interact with the app as you did when you ran it locally substituting the port for the local port you defined when you ran the container. If you ran the container without the -d option then you should now see any output of the container in your terminal. If you ran the container in detached mode with the -d option then you can check to see if the container is running with the following command:
+Example:
+
+```
+docker run -p 3001:3000 -d abhisheksr01/helloworld:0.0.1
+```
+
+With the container now running you should be able to interact with the app as you did when you ran it locally substituting the port for the local port you defined when you ran the container.
+
+http://localhost:3001/
+
+If you ran the container without the -d option then you should now see any output of the container in your terminal.
+
+If you ran the container in detached mode with the -d option then you can check to see if the container is running with the following command:
 
 ```
 docker container ls
@@ -207,7 +235,7 @@ docker container ls
 and you can check its output with the docker logs command using the `Container ID` found in the output of the previous command:
 
 ```
-docker logs <container_id>
+docker logs [container_id]
 ```
 
 ### Stopping the Container
@@ -217,7 +245,28 @@ If you ran the container in the foreground without the `-d` option then you can 
 docker stop <container_id>
 ```
 
-- There are two files we need to familiarise ourselves with, both of them are kubernetes manefest located in the kubernetes folder.
+### Pushing Image to Docker Hub
+
+Logging to docker hub using credentials obtained during setup step:
+
+```
+docker login
+```
+
+Expected Output:
+![](./images/docker-login.png)
+
+Push local docker image to docker hub as below:
+```
+docker push [YOUR_DOCKER_HUB_ID/DOCKER_IMAGE_NAME]:[TAG]
+```
+
+Example:
+```
+docker push abhisheksr01/helloworld:0.0.1
+```
+
+- There are two files we need to familiarize ourselves with, both of them are kubernetes manifest located in the kubernetes folder.
 
 - These files outline the objects that will be created.
 
