@@ -145,13 +145,18 @@ The app exposes 2 endpoints which can either be tested using CLI utility [curl](
   ```json
   {
     "msg":"Hello Bob!"
-  }⏎  
+  }
   ```
 
 You can terminate the app at any time with `ctrl  +c`.
 
 ## Running the App in Docker
+
 ### Create a Dockerfile
+
+The very first step is to create a Docker file, it is a set of instruction that Docker understands to perform the desired operation.
+
+Please find below a list of important Docker keywords and there respective description.
 
 | KEYWORD       | Usage Description
 | ------------- | ------------- 
@@ -164,7 +169,6 @@ You can terminate the app at any time with `ctrl  +c`.
 | COPY         | Takes in a src and destination arguments & copy a local file or directory from your host (the machine building the Docker image) into the Docker image itself.
 | ADD          | Apart from what COPY does, it also supports 2 other sources. First, you can use a URL instead of a local file / directory. Secondly, you can extract a tar file from the source directly into the destination.        
 | ENTRYPOINT   | Sets the concrete default application that is used every time a container is created using the image. For example, here we are using Spring Boot application inside the image. To only run that application use ENTRYPOINT and whenever a container is created our application will be the target. If we couple ENTRYPOINT with CMD, we can remove “application” from CMD and just leave “arguments” which will be passed to the ENTRYPOINT.
-
 
 Once pieced together your base image definitions should looks something like the below:
 
@@ -191,7 +195,7 @@ We do this with the following command, specifying a tag to name the image (e.g. 
 Optionally you can also use the `-f` option followed by a path if your Dockerfile is in a different location from where you are building the image.
 
 ```
-docker build -t [YOUR_DOCKER_HUB_ID/DOCKER_IMAGE_NAME]:[TAG] <path_to_context>
+docker build -t [YOUR_DOCKER_HUB_ID/DOCKER_IMAGE_NAME]:[TAG] [path_to_context]
 ```
 
 Example:
@@ -242,7 +246,7 @@ docker logs [container_id]
 If you ran the container in the foreground without the `-d` option then you can stop the container by using `ctrl+c`. However if you ran it in detached mode you can stop the container with the docker stop command using the `Container ID` found when you list the running containers.
 
 ```
-docker stop <container_id>
+docker stop [container_id]
 ```
 
 ### Pushing Image to Docker Hub
@@ -266,26 +270,89 @@ Example:
 docker push abhisheksr01/helloworld:0.0.1
 ```
 
+## Running the App in Kubernetes
+
 - There are two files we need to familiarize ourselves with, both of them are kubernetes manifest located in the kubernetes folder.
 
 - These files outline the objects that will be created.
 
-### Run the command in your terminal
+## Update Kubernetes Manifest
+Open the [deployment.yaml](./kubernetes/deployment.yaml) file and replace the docker image name with the one you have pushed to the docker hub.
 
-Kubernetes apply will instruct the kubernetes api to create the object as specified in the kubernetes manifest.
+```yaml
+- name: nodejs-intro-to-devops
+  image: [YOUR_DOCKER_HUB_ID]/[DOCKER_IMAGE_NAME]:[DOCKER_IMAGE_TAG]
+```
 
+Example:
+```yaml
+- name: nodejs-intro-to-devops
+  image: abhisheksr01/helloworld:0.0.1
+```
+
+Once done execute below command:
+
+## Deploy app to kubernetes
 ```
 kubectl apply -f ./kubernetes
 ```
-The following command exposes the port
-```
-kubectl port-forward service/nodejs-intro-to-devops 3000:3000
-```
 
+Kubernetes apply will instruct the kubernetes api to create the object as specified in the kubernetes manifest.
+
+## Check the app deployed
 The get pods lists all running pods. You should be able to see the nodejs intro to devops listed after this command is run.
 ```
 kubectl get pods
 ```
+
+```
+kubectl get deployments
+```
+
+```
+kubectl get services
+```
+
+## Accessing the application locally
+
+The following command exposes the port
+```
+kubectl port-forward service/nodejs-intro-to-devops 3002:3000
+```
+
+Click the url http://localhost:3002 to access the application.
+
+## Changing the application response
+
+Our application uses an environment variable `GREET_MESSAGE` to store the Greeting message.
+
+Lets update the deployment.yaml to change the response.
+
+```yaml
+containers:
+        - name: nodejs-intro-to-devops
+          image: [YOUR_DOCKER_HUB_ID]/[DOCKER_IMAGE_NAME]:[DOCKER_IMAGE_TAG]
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+          env:
+            - name: "GREET_MESSAGE"
+              value: "Hello World I am running inside k8s cluster."
+```
+
+Execute below command to implement the changes:
+
+```
+kubectl apply -f ./kubernetes
+```
+
+To re establish the port forwarding execute below command:
+
+```
+kubectl port-forward service/nodejs-intro-to-devops 3002:3000
+```
+
+### Delete kubernetes objects
 
 Finally, to cleanup your project, run the command to delete the pod
 ```
