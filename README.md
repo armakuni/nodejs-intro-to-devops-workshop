@@ -276,7 +276,7 @@ docker push abhisheksr01/helloworld:0.0.1
 
 - These files outline the objects that will be created.
 
-## Update Kubernetes Manifest
+### Update Kubernetes Manifest
 Open the [deployment.yaml](./kubernetes/deployment.yaml) file and replace the docker image name with the one you have pushed to the docker hub.
 
 ```yaml
@@ -330,14 +330,14 @@ Lets update the deployment.yaml to change the response.
 
 ```yaml
 containers:
-        - name: nodejs-intro-to-devops
-          image: [YOUR_DOCKER_HUB_ID]/[DOCKER_IMAGE_NAME]:[DOCKER_IMAGE_TAG]
-          ports:
-            - containerPort: 3000
-          imagePullPolicy: Always
-          env:
-            - name: "GREET_MESSAGE"
-              value: "Hello World I am running inside k8s cluster."
+  - name: nodejs-intro-to-devops
+    image: [YOUR_DOCKER_HUB_ID]/[DOCKER_IMAGE_NAME]:[DOCKER_IMAGE_TAG]
+    ports:
+      - containerPort: 3000
+    imagePullPolicy: Always
+    env:
+      - name: "GREET_MESSAGE"
+        value: "Hello World I am running inside k8s pod."
 ```
 
 Execute below command to implement the changes:
@@ -352,9 +352,18 @@ To re establish the port forwarding execute below command:
 kubectl port-forward service/nodejs-intro-to-devops 3002:3000
 ```
 
+Open url http://localhost:3002
+
+Expected output:
+```
+Hello World I am running inside k8s pod.
+```
+
 ### Delete kubernetes objects
 
-Finally, to cleanup your project, run the command to delete the pod
+Finally, to cleanup your project, run the command to delete the kubernetes objects.
 ```
 kubectl delete -f ./kubernetes
 ```
+
+Quit Docker Desktop app for turning off the docker and kubernetes.
