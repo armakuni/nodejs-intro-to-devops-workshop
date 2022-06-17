@@ -8,14 +8,14 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            # Find a cache corresponding to this specific package-lock.json checksum
+            # Find a cache corresponding to this specific package.json checksum
             # when this file is changed, this key will fail
-            - v2-npm-deps-{{ checksum "package-lock.json" }}
+            - v2-npm-deps-{{ checksum "package.json" }}
       - run:
           name: "Install node dependencies"
           command: "time npm i"
       - save_cache: # ** special step to save dependency cache **
-          key: v2-npm-deps-{{ checksum "package-lock.json" }}
+          key: v2-npm-deps-{{ checksum "package.json" }}
           paths:
             - "node_modules"
 
