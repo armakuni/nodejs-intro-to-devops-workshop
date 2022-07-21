@@ -368,7 +368,11 @@ kubectl delete -f ./kubernetes
 
 Quit Docker Desktop app for turning off the docker and kubernetes.
 
-## Setting up a basic CircleCI pipeline
+## Set up a CICD pipeline
+
+ToDo: Add few points about CICD pipeline and suggest we are going to use CircleCI for this purpose.
+
+### Setup a basic CircleCI pipeline
 
 The objective of this section is now to automate all* the steps we have manually performed above using CircleCI.
 
@@ -383,5 +387,4 @@ ToDo: This is a refactoring activity hence use orbs, parallelize the job executi
 ToDo: purposefully cause a failure in the pipeline as below:
 - In CircleCI config and suggest how to fix it, avoid it.
 - Pipeline execution and how to ssh into the pipeline and debug.
-
-Any other issues.
+- Any other issues.
